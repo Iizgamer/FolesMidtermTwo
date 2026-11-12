@@ -76,6 +76,8 @@ public class FolesMidtermTwo {
             case 3 -> {userClass = "Mage"; userMaxHP = 75; userATK = 35;}
         }
 
+        Player player = new Player(name);
+
         System.out.println("Alright, and with that, let's get this game started!");
         input.nextLine();
         System.out.println(name + " is a " + userClass + " in the wonderful land of Jwetmalf. " + upperFirst(subjectPronoun) + " " + isOrAre + " tasked with protecting Princess Figas, the fairest in the land.");
@@ -132,15 +134,23 @@ public class FolesMidtermTwo {
                     throw new InvalidResponse();
                 }
             } catch (Exception e) {
-                System.out.println("Sir Yonaza: \"What? Speak up lad!\"");
+                System.out.println("Sir Yonaza: \"What? Speak up chum!\"");
                 input.nextLine();
             }
         }
 
         switch (userResponse) {
             case 1 -> System.out.println(name + ": \"Prepare to face my wrath!\"\n\nSir Yonaza: \"It shall be you facing the wrath!\"");
-            case 2 -> System.out.println(name + ": \"Dude, I don't even wanna fight.\"\n\nSir Yonaza: \"Your tricks shall not deceive me! Prepare for battle, boy!\"");
+            case 2 -> System.out.println(name + ": \"Dude, I don't even wanna fight.\"\n\nSir Yonaza: \"Your tricks shall not deceive me! Prepare for battle, fool!\"");
         }
+
+        input.nextLine(); input.nextLine();
+
+        System.out.println("BATTLE START!");
+
+        input.nextLine();
+
+        tutorialBattle(input, name, userMaxHP, userATK, "Sir Yonaza", 100, 10);
     }
 
     /**
@@ -151,12 +161,63 @@ public class FolesMidtermTwo {
     public static String upperFirst(String word) {
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
+
+    public static void tutorialBattle(Scanner input, String playerName, int playerHP, int playerATK, String enemyName, int enemyHP, int enemyATK) {
+        int turnSelection = 0;
+        boolean turnSelectionLoop = true;
+
+        System.out.println("\nSir Yonaza: \"Halt! You don't even know how to fight, do you? I shall not fight a defenseless fool!\"");
+        input.nextLine();
+        System.out.println("HP: " + playerHP + " | EHP: " + enemyHP + "\n1: Attack\n2: Item\n3: Other Actions\n\nSir Yonaza: \"This is your turn menu! Notice your three options: attacking, items, or other actions!\"");
+        input.nextLine();
+        System.out.println("Sir Yonaza: \"First, attacking! The only action you should be worried about! Attacking is how you cut down your enemies, reducing their HP until EHP equals 0!\"");
+        input.nextLine();
+        System.out.println("Sir Yonaza: \"Next, items! You shall never touch items! Only weaklings use items in the midst of battle! But, if you're willing to be humiliated, items can be used to heal you during battle or can be used to boost stats during battle, such as attack.\"");
+        input.nextLine();
+        System.out.println("Sir Yonaza: \"Finally, other actions! Although attacking should always be your first option, you may use other actions to intimidate your opponent and ONLY to intimidate your opponent! Every other option is useless and shouldn't be touched! Don't even consider it!\"");
+        input.nextLine();
+        System.out.println("Sir Yonaza: \"Now, prepare to die!\"");
+        input.nextLine();
+
+        // god this is gonna take forever
+        System.out.println("BATTLE START! (for real this time)");
+        input.nextLine();
+        while (playerHP > 0 && enemyHP > 0) {
+            System.out.println("HP: " + playerHP + " | EHP: " + enemyHP + "\n1: Attack\n2: Item\n3: Other Actions");
+            while (turnSelectionLoop) {
+                try {
+                    turnSelection = input.nextInt();
+                    if (turnSelection == 1 || turnSelection == 2 || turnSelection == 3) {
+                        turnSelectionLoop = false;
+                    } else {
+                        throw new InvalidTurnSelection();
+                    }
+                } catch (Exception e) {
+                    System.out.println("Incorrect turn selection received! Please try again!");
+                    input.nextLine();
+                }
+            }
+            turnSelectionLoop = true;
+            if (turnSelection == 1) {
+                // start programming back here
+            }
+        }
+
+    }
 }
 
 class Player {
     String name;
 
     Player(String name) {
+        this.name = name;
+    }
+}
+
+class Enemy {
+    String name;
+
+    Enemy(String name) {
         this.name = name;
     }
 }
@@ -187,6 +248,16 @@ class InvalidResponse extends Exception {
     }
 
     public InvalidResponse(String message) {
+        super(message);
+    }
+}
+
+class InvalidTurnSelection extends Exception {
+    public InvalidTurnSelection() {
+        super();
+    }
+
+    public InvalidTurnSelection(String message) {
         super(message);
     }
 }
