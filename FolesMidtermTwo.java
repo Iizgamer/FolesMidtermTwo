@@ -30,6 +30,7 @@ public class FolesMidtermTwo {
         String possessivePronoun = "";
         String isOrAre = "";
         String userClass = "";
+        String[] prompts = {"jklkj", "asdfa", "asjkl", "lkjfd", "asdfj", "ajskd", "laksj"};
 
         System.out.println("Welcome to Foles RPG (name still a work in progress). What name will you have for this RPG?");
         String name = input.nextLine();
@@ -76,13 +77,13 @@ public class FolesMidtermTwo {
             case 3 -> {userClass = "Mage"; userMaxHP = 75; userATK = 35;}
         }
 
-        Player player = new Player(name);
+        Player player = new Player(name, userClass, userMaxHP, userATK);
 
         System.out.println("Alright, and with that, let's get this game started!");
         input.nextLine();
-        System.out.println(name + " is a " + userClass + " in the wonderful land of Jwetmalf. " + upperFirst(subjectPronoun) + " " + isOrAre + " tasked with protecting Princess Figas, the fairest in the land.");
+        System.out.println(player.name + " is a " + player.userClass + " in the wonderful land of Jwetmalf. " + upperFirst(subjectPronoun) + " " + isOrAre + " tasked with protecting Princess Figas, the fairest in the land.");
         input.nextLine();
-        System.out.println("Princess Figas: \"" + name + "! I demand you to go out and attack the opposing kingdom!\"");
+        System.out.println("Princess Figas: \"" + player.name + "! I demand you to go out and attack the opposing kingdom!\"");
         input.nextLine();
         System.out.println("How do you respond?\n1: Absolutely, madam! I shall be back before sundown! | 2: No brah, I ain't doin' allat.");
         
@@ -95,24 +96,24 @@ public class FolesMidtermTwo {
                     throw new InvalidResponse();
                 }
             } catch (Exception e) {
-                System.out.println("Princess Figas: \"What? Speak up, " + name + "!\"");
+                System.out.println("Princess Figas: \"What? Speak up, " + player.name + "!\"");
                 input.nextLine();
             }
         }
         userResponseLoop = true;
 
         switch (userResponse) {
-            case 1 -> System.out.println(name + ": \"Absolutely, madam! I shall be back before sundown!\"\n\nPrincess Figas: \"Good! Now go!\"");
-            case 2 -> System.out.println(name + ": \"No brah, I ain't doin' allat.\"\n\nPrincess Figas: \"What?! How dare you go against my decree! Go now or it shall be off with your head!\"");
+            case 1 -> System.out.println(player.name + ": \"Absolutely, madam! I shall be back before sundown!\"\n\nPrincess Figas: \"Good! Now go!\"");
+            case 2 -> System.out.println(player.name + ": \"No brah, I ain't doin' allat.\"\n\nPrincess Figas: \"What?! How dare you go against my decree! Go now or it shall be off with your head!\"");
         }
 
         input.nextLine(); input.nextLine(); // can't explain why I need two input.nextLine()s but I do, so here it is.
 
-        System.out.println(name + " decides to head off to Plumaland, the enemy's capital. Whether or not it was according to " + possessivePronoun + " own will does not matter, as " + subjectPronoun + " would've eventually gone anyways.");
+        System.out.println(player.name + " decides to head off to Plumaland, the enemy's capital. Whether or not it was according to " + possessivePronoun + " own will does not matter, as " + subjectPronoun + " would've eventually gone anyways.");
 
         input.nextLine();
 
-        System.out.println("After a day's travel, " + name + " arrives in Plumaland, a singular castle lies waiting for " + name + ". Suddenly, the drawbridge lowers...");
+        System.out.println("After a day's travel, " + player.name + " arrives in Plumaland, a singular castle lies waiting for " + player.name + ". Suddenly, the drawbridge lowers...");
         input.nextLine();
         System.out.println("...and keeps lowering...");
         input.nextLine();
@@ -140,8 +141,8 @@ public class FolesMidtermTwo {
         }
 
         switch (userResponse) {
-            case 1 -> System.out.println(name + ": \"Prepare to face my wrath!\"\n\nSir Yonaza: \"It shall be you facing the wrath!\"");
-            case 2 -> System.out.println(name + ": \"Dude, I don't even wanna fight.\"\n\nSir Yonaza: \"Your tricks shall not deceive me! Prepare for battle, fool!\"");
+            case 1 -> System.out.println(player.name + ": \"Prepare to face my wrath!\"\n\nSir Yonaza: \"It shall be you facing the wrath!\"");
+            case 2 -> System.out.println(player.name + ": \"Dude, I don't even wanna fight.\"\n\nSir Yonaza: \"Your tricks shall not deceive me! Prepare for battle, fool!\"");
         }
 
         input.nextLine(); input.nextLine();
@@ -150,7 +151,9 @@ public class FolesMidtermTwo {
 
         input.nextLine();
 
-        tutorialBattle(input, name, userMaxHP, userATK, "Sir Yonaza", 100, 10);
+        Enemy sirYonaza = new Enemy("Sir Yonaza", 50, 10);
+
+        tutorialBattle(input, player.name, player.maxHP, player.atk, sirYonaza.name, sirYonaza.maxHP, sirYonaza.atk, prompts);
     }
 
     /**
@@ -162,9 +165,13 @@ public class FolesMidtermTwo {
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
-    public static void tutorialBattle(Scanner input, String playerName, int playerHP, int playerATK, String enemyName, int enemyHP, int enemyATK) {
+    public static void tutorialBattle(Scanner input, String playerName, int playerHP, int playerATK, String enemyName, int enemyHP, int enemyATK, String[] prompts) {
         int turnSelection = 0;
         boolean turnSelectionLoop = true;
+        String targetWord;
+        long startTime;
+        long elapsedTime;
+        String attackInput;
 
         System.out.println("\nSir Yonaza: \"Halt! You don't even know how to fight, do you? I shall not fight a defenseless fool!\"");
         input.nextLine();
@@ -199,7 +206,17 @@ public class FolesMidtermTwo {
             }
             turnSelectionLoop = true;
             if (turnSelection == 1) {
-                // start programming back here
+                targetWord = prompts[(int)(Math.random()*prompts.length)];
+                System.out.println("Type: " + targetWord);
+                startTime = System.currentTimeMillis();
+                attackInput = input.next();
+                elapsedTime = System.currentTimeMillis() - startTime;
+
+                if (attackInput.equalsIgnoreCase(targetWord) && elapsedTime <= 4000) {
+                    System.out.println("Successful attack");
+                } else {
+                    System.out.println("Unsuccessful attack");
+                }
             }
         }
 
@@ -208,17 +225,37 @@ public class FolesMidtermTwo {
 
 class Player {
     String name;
+    String userClass;
+    int maxHP;
+    int atk;
+    int hp = maxHP;
 
-    Player(String name) {
+    Player(String name, String userClass, int maxHP, int atk) {
         this.name = name;
+        this.userClass = userClass;
+        this.maxHP = maxHP;
+        this.atk = atk;
+    }
+
+    public void takeDamage(int damage) {
+        hp -= damage;
+    }
+
+    public void heal(int healing) {
+        hp += healing;
     }
 }
 
 class Enemy {
     String name;
+    int maxHP;
+    int atk;
+    int hp = maxHP;
 
-    Enemy(String name) {
+    Enemy(String name, int maxHP, int atk) {
         this.name = name;
+        this.maxHP = maxHP;
+        this.atk = atk;
     }
 }
 
